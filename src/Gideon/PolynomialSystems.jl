@@ -1,8 +1,15 @@
+# Methods for manipulating polynomial systems 
 
-
-function is_inconsistent( s::PolSys )::Bool
+# Checks whether a polynomial system is inconsistent in a trivial way
+function is_trivially_inconsistent( s::PolSys )::Bool
   # Check whether pols contains nonzero pol
   # Check whether constr is not false
+end
+
+iti = is_trivially_inconsistent
+
+function looks_fine( s::PolSys )::Bool
+    !is_trivially_inconsistent(s)
 end
 
 # TODO: The polynomials, constraints, and known values will be updated but for user defined attributes we should allow 
@@ -16,7 +23,6 @@ end
 
 """update_number_field( s::PolSys, ϕ ) - Returns a polynomial system where the definitions of the number fields have been updated 
 to the be the image of ϕ and all values and coefficients belong to the image of ϕ.
-The polynomials, constraints, and known values will be updated but user defined attributes will not.
 """
 function update_number_field( s::PolSys, ϕ )::PolSys
 
