@@ -25,3 +25,7 @@ end
 function known_values( s::PolSys )
     return s.knwns
 end
+
+# TODO: implement ParametrizedPolSys for polynomial systems that can be iterated over but 
+# are too large to store all at once. This would be useful for when we solve a subsystem using the smith decomposition
+# and we get a large amount of solutions. 
