@@ -1,9 +1,13 @@
 name = "Lyctr"
 uuid = "850dcf9d-159a-4d78-9d26-91d25903a63e"
-authors = ["Gert Vercleyen"]
 version = "0.0.0-DEV"
+authors = ["Gert Vercleyen"]
+
+[deps]
+Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
 
 [compat]
+Oscar = "1.7.1"
 julia = "1.12.0"
 
 [extras]
