@@ -1,5 +1,9 @@
 module Lyctr
 
+using Oscar
+using FusionRings
+
+
 include("Gideon/Gideon.jl")
 include("Harrow/Harrow.jl")
 
