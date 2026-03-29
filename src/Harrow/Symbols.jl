@@ -1,12 +1,13 @@
+# This file contains constructors for all kinds of symbols whose labels represent objects in a fusion category
+
 # Some abreviations for fields
 ℚ        = QQ;
 ℚb       = algebraic_closure( ℚ )
 ℚab, ζ   = abelian_closure( ℚ, sparse=false )
-ℚabs, ζs = abelian_closure( ℚ, sparse=true )
+sℚab, ζs = abelian_closure( ℚ, sparse=true )
 
 
-
-# This file contains constructors for all kinds of symbols whose labels represent objects in a fusion category
+# F_labels returns a list of 10-element lists corresponding to well-formed F-symbols
 function F_labels(fr::FusionRing)
     r  = rank( fr )
     mt = multiplication_table( fr )
@@ -37,12 +38,14 @@ function F_labels(fr::FusionRing)
     lbls
 end
 
-"""F_symbols( fr::FusionRing, field=ℚab) returns a tuple R, fsymb
+"""F_symbols( fr::FusionRing, field=ℚab) returns a tuple ( R, fsymb )
 where R is a polynomial ring in the F-symbols fsymb over the requested field.
 """
 function F_symbols( fr::FusionRing, field=ℚab)
-    polynomial_ring( field, :ℱ => F_labels( fr ), cached=true )
+    polynomial_ring( field, :ℱ => F_labels(fr), cached=true )
 end
+
+
 
 #TODO: figure out how to obtain indices of an F-symbol. Could be that its impossible since the indices might be part of a naming scheme and not properly stored :/
 #
