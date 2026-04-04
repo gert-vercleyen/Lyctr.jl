@@ -4,6 +4,7 @@ version = "0.0.0-DEV"
 authors = ["Gert Vercleyen"]
 
 [deps]
+FusionRings = "2d8f65af-6f64-4f8e-9a4a-6a8c0dfc3f5b"
 Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
 
 [compat]
