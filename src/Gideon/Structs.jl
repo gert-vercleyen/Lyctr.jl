@@ -2,12 +2,30 @@
 # This struct should be as optimal as possible. It might be best to
 # parametrize the number field so we can give predefined types to all struct fields
 struct PolSys
-       rng            # base ring over which pols are defined
+       rng::Ring            # base ring over which pols are defined
        pls            # Polynomials of the system
        cnstr          # Constraints of the system
        knwns          # Dictionary of known values
        symm           # Symmetries of the variables
        __attr         # Further info
+end
+
+function pol_sys(
+    ring, 
+    pols, 
+    constr, 
+    knowns; 
+    symm = missing, 
+    attr = missing
+    )
+    PolSys(
+        ring,
+        pols,
+        constr,
+        knowns,
+        symm,
+        attr
+    )
 end
 
 function base( s::PolSys )
