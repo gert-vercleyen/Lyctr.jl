@@ -23,11 +23,11 @@ function F_labels(fr::FusionRing)
                 m3 = mt[ b, c, f ]
                 m4 = mt[ a, f, d ]
                 if m3 * m4 != 0
-                    for i ∈ 1:m1, j ∈ 1:m2, k ∈ 1:m3, l ∈ 1:m4
+                    for α ∈ 1:m1, β ∈ 1:m2, γ ∈ 1:m3, δ ∈ 1:m4
                         # [ F^{abc}_d ]^{(e,i,j)}_{(f,k,l)}
                         push!(
                             lbls,
-                            [ a, b, c, d, e, i, j, f, k, l ]
+                            [ a, b, c, d, e, α, β, f, γ, δ ]
                         )
                     end
                 end
@@ -38,14 +38,23 @@ function F_labels(fr::FusionRing)
     lbls
 end
 
-"""F_symbols( fr::FusionRing, field=ℚab) returns a tuple ( R, fsymb )
-where R is a polynomial ring in the F-symbols fsymb over the requested field.
+"""F_symbols( fr::FusionRing, field=ℚab, symbol = :ℱ ) returns a fourtuple ( R, fvar, dict, idict )
+where 
+* R is a polynomial ring in the singly-indexed F-symbols fvar over the requested field.
+* fvar is an array of singly-indexed F-symbols [ ℱ[1], ..., ℱ[n] ]
+* dict maps the singly-index F-symbols to their labels (arrays with 10 integers)
+* idict maps the labels of the F-symbols to their singly-indexed representations
 """
-function F_symbols( fr::FusionRing, field=ℚab)
-    polynomial_ring( field, :ℱ => F_labels(fr), cached=true )
+function F_symbols( fr::FusionRing; ring = ℚb, symbol = :ℱ )
+    fl = F_labels(fr)
+    n  = length(F_labels)
+
+    R, f  = polynomial_ring( field, :ℱ => 1:n, cached=true )
+    dict  = Dict( f[i] => fl[i] for i in 1:n )
+    idict = Dict( fl[i] => f[i] for i in 1:n ) 
+
+    ( R, f, dict, idict )
 end
 
 
 
-#TODO: figure out how to obtain indices of an F-symbol. Could be that its impossible since the indices might be part of a naming scheme and not properly stored :/
-#
