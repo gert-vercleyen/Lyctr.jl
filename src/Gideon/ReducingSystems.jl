@@ -50,7 +50,28 @@ function deduce_trivialities( s::PolSys )::Array{PolSys}
 end
 
 
-export reduce_binomials
+export reduce_binomial_subsystem
+
+"""reduce_binomial_subsystem(s::PolSys)::Array{PolSys} returns an array of PolSys' where 
+    the binomial subsystem of s has been reduced such that the values of variables 
+    that can be zero have been deduced and plugged in, and the subsystem of binomial equations
+    have been upper triangularized. 
+
+    Note: the list contains one reduced system per allowed configuration of variables that can be zero. 
+   
+    reduce_binomial_subsystem(ls::Array{PolSys})::Array{PolSys} maps reduce_binomials to ls.
+"""
+
+function reduce_binomial_subsystem(systems::Array{PolSys})::Array{PolSys}
+    map( reduce_by_binomial_subsystem, systems )
+end
+
+function reduce_binomial_subsystem(s::PolSys)::Array{PolSys}
+
+end
+
+
+export solve_binomial_subsystem
 
 """reduce_binomials(s::PolSys)::Array{PolSys} returns an array of PolSys' where 
     the binomial subsystem of s has been reduced such that the values of variables 
@@ -62,10 +83,10 @@ export reduce_binomials
     reduce_binomials(ls::Array{PolSys})::Array{PolSys} maps reduce_binomials to ls.
 """
 
-function reduce_binomials(systems::Array{PolSys})::Array{PolSys}
+function solve_binomial_subsystem(systems::Array{PolSys})::Array{PolSys}
     map( reduce_by_binomials, systems )
 end
 
-function reduce_binomials(s::PolSys)::Array{PolSys}
+function solve_binomial_subsystem(s::PolSys)::Array{PolSys}
 
 end
