@@ -20,8 +20,6 @@ whitespace_in_kwargs=true
 
 normalize_line_endings="unix"
 
-trailing_comma=nothing
-
 align_assignment=true
 
 align_struct_field=true
