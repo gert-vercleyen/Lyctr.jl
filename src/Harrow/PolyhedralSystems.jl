@@ -111,7 +111,7 @@ function mf_pent_eqns(r::Int64, dict, K::Ring; triv_vac = true)
       a, b, = n2
       c, d, = n3
       pol = sum(
-        fsymb([a, b, c, g, f, h])*fsymb([a, h, d, e, g, k])*fsymb([b, c, d, k, h, l]) for
+        fs([a, b, c, g, f, h])*fs([a, h, d, e, g, k])*fs([b, c, d, k, h, l]) for
         h in 1:r
       )
 
