@@ -31,7 +31,7 @@ function mf_pent_sys(fr::FusionRing, K::Ring; symbol = :ℱ, triv_vac = true)::P
   # set up the symmetries 
   s = mf_gauge_symmetries(r, dict, K; triv_vac = triv_vac)
 
-  fsymb(v::Vector{Int64}) = 1 ∈ v[1:3] ? K(1) : idict(v)
+  fsymb(v::Vector{Int64}) = 1 ∈ v[1:3] ? K(1) : dict(v)
 
   variables = Dict(key => fsymb(key) for key in keys(dict))
 
@@ -39,24 +39,24 @@ function mf_pent_sys(fr::FusionRing, K::Ring; symbol = :ℱ, triv_vac = true)::P
 end
 
 # multiplicity-free pentagon equations 
-function mf_pent_eqns(r::Int64, idict, K::Ring; triv_vac = true)
+function mf_pent_eqns(r::Int64, dict, K::Ring; triv_vac = true)
 
-  # trivial cat is too simple for further methods
-  (r == 1 && triv_vac) && return nothing #Todo:return pol sys 
+  # trivial cat 
+  if r == 1
+    return [ dict[ [1,1,1,1,1,1,1,1,1,1] ] - K(1) ] 
+  end
 
-  labels = keys(idict)
+
+  labels = keys(dict)
 
   if triv_vac
     function fsymb(v::Vector{Int64})
       1 ∈ v[1:3] && return K(1)
-      !haskey(idict, v) && return K(0)
-      return idict[v]
-    end
+      !haskey(dict, v) && return K(0)
+      return dict[v]
   else
-    function fsymb(v::Vector{Int64})
-      !haskey(idict, v) && return K(0)
-      return idict[v]
-    end
+      !haskey(dict, v) && return K(0)
+      return dict[v]
   end
 
   # Construct the polynomials
@@ -68,7 +68,7 @@ function mf_pent_eqns(r::Int64, idict, K::Ring; triv_vac = true)
     f, c, d, e, g, l = lab1
 
     function is_match(v::Vector{Int64})
-      return v[3] == l && v[4] == e && v[5] = f
+      return v[3] == l && v[4] == e && v[5] == f
     end
 
     matches = filter(is_match, labels)
@@ -76,8 +76,8 @@ function mf_pent_eqns(r::Int64, idict, K::Ring; triv_vac = true)
     for lab2 in matches
       a, b, _, _, _, k = lab2
       pol =
-        fsymb([f, c, d, e, g, l]) * fsymb([a, b, l, e, f, k]) - sum(
-          fsymb([a, b, c, g, f, h])*fsymb([a, h, d, e, g, k])*fsymb([b, c, d, k, h, l]) for
+        fs([f, c, d, e, g, l]) * fs([a, b, l, e, f, k]) - sum(
+          fs([a, b, c, g, f, h])*fs([a, h, d, e, g, k])*fs([b, c, d, k, h, l]) for
           h in 1:r
         )
 
