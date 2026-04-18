@@ -6,9 +6,11 @@ authors = ["Gert Vercleyen"]
 [deps]
 FusionRings = "2d8f65af-6f64-4f8e-9a4a-6a8c0dfc3f5b"
 Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
+PicoSAT = "ff2beb65-d7cd-5ff1-a187-74671133a339"
 
 [compat]
 Oscar = "1.5.1"
+PicoSAT = "0.4.1"
 julia = "1.12.0"
 
 [extras]
