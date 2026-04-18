@@ -96,3 +96,69 @@ function is_true( ineq::Inequality )
     return p != 0
   end 
 end
+
+#┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+#┃                                   Constraint                                    ┃
+#┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+struct Constraint
+  lis::Vector{Vector{Union{Inequality,Bool}}}
+end
+
+function constraints(list::Vector{Vector{Union{Inequality,Bool}}})::Constraint
+  Constraint(list)
+end
+
+function list(c::Constraint)::Vector{Vector{Union{Inequality,Bool}}}
+  return c.lis
+end
+
+function Base.show( io::IO, constraint::Constraint )
+  function boolstring(b::Bool) 
+    b ? "⊤" : "⊥"
+  end
+
+  function ineqstring(ineq)::String
+    typeof(ineq) === Bool ? boolstring(ineq) : printstring(ineq)
+  end
+
+  function orstring(l::Vector{Union{Inequality,Bool}})::String
+    join( ineqstring.(l), " ∨ " )
+  end
+  
+  lis = list(constraint) 
+
+  orstrings = orstring.(lis)
+
+  n = size( orstrings, 1 ) 
+
+  # try to keep length under 80 
+  l1 = length(orstrings[begin]) 
+  l2 = length(orstrings[end])
+
+  startlength = n == 1 ? l1 : l1 + l2 
+
+  if startlength > 120
+    str = join( [ orstrings[begin], "…" , orstrings[end] ], " ∧ " )
+    print( io, str )
+  else
+    i = 2
+    nextstring = orstrings[i]
+    l = startlength + length(nextstring)
+    
+    strings = [ orstrings[begin] ]
+    while l < 120 && i <= n
+      push!( strings, orstring[i] )
+      i = i + 1
+      l = l + length(orstrings[i+1])
+    end
+
+    if size(strings,1) < n - 1
+      push!( strings, "…" )
+      push!( strings, orstrings[end] )
+    end 
+
+    print( io, join( strings, " ∧ " ) )
+  end
+
+end
