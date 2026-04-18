@@ -146,56 +146,55 @@ function mf_invertibility_constraints(r, dict, K; triv_vac = triv_vac) end
 function mf_gauge_symmetries(r, dict, K; triv_vac = triv_vac) end
 
 # pentagon equations with multiplicity
-function pent_eqns(fr::FusionRing,k::Ring)::PolSys
-    print("Not implemented yet.")
-    #TODO: implement
+function pent_eqns(fr::FusionRing, k::Ring)::PolSys
+  return print("Not implemented yet.")
+  #TODO: implement
 end
 
 export hexagon_equations
 
 # default ring is algebraic_closure of ℚ
 function hexagon_equations(fr::FusionRing)::PolSys
-    hexagon_equations( fr, ℚb )
+  return hexagon_equations(fr, ℚb)
 end
 
-function hexagon_equations(fr::FusionRing, k::Ring )::PolSys
-    multiplicity(fr) === 1 ? mf_hex_eqns(fr,k) : hex_eqns(fr,k) 
+function hexagon_equations(fr::FusionRing, k::Ring)::PolSys
+  return multiplicity(fr) === 1 ? mf_hex_eqns(fr, k) : hex_eqns(fr, k)
 end
 
 # multiplicity-free hexagon equations 
-function mf_hex_eqns(fr::FusionRing,k::Ring)::PolSys
-    print("Not implemented yet.")
+function mf_hex_eqns(fr::FusionRing, k::Ring)::PolSys
+  return print("Not implemented yet.")
 
-    #TODO: implement
+  #TODO: implement
 end
 
 # hexagon equations with multiplicity
-function hex_eqns(fr::FusionRing,k::Ring)::PolSys
-    print("Not implemented yet.")
+function hex_eqns(fr::FusionRing, k::Ring)::PolSys
+  return print("Not implemented yet.")
 
-    #TODO: implement
+  #TODO: implement
 end
-
 
 export pivotal_equations
 
 # default ring is algebraic_closure of ℚ
 function hexagon_equations(fr::FusionRing)::PolSys
-    pivotal_equations( fr, ℚb )
+  return pivotal_equations(fr, ℚb)
 end
 
-function pivotal_equations(fr::FusionRing, k::Ring )::PolSys
-    multiplicity(fr) === 1 ? mf_piv_eqns(fr,k) : piv_eqns(fr,k) 
+function pivotal_equations(fr::FusionRing, k::Ring)::PolSys
+  return multiplicity(fr) === 1 ? mf_piv_eqns(fr, k) : piv_eqns(fr, k)
 end
 
 # multiplicity-free pivotal equations 
-function mf_piv_eqns(fr::FusionRing,k::Ring)::PolSys
-    print("Not implemented yet.")
-    #TODO: implement
+function mf_piv_eqns(fr::FusionRing, k::Ring)::PolSys
+  return print("Not implemented yet.")
+  #TODO: implement
 end
 
 # pivotal equations with multiplicity
-function piv_eqns(fr::FusionRing,k::Ring)::PolSys
-    print("Not implemented yet.")
-    #TODO: implement
+function piv_eqns(fr::FusionRing, k::Ring)::PolSys
+  return print("Not implemented yet.")
+  #TODO: implement
 end
