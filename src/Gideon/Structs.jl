@@ -1,3 +1,8 @@
+
+#┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+#┃                                     PolSys                                      ┃
+#┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
 # TODO:
 # This struct should be as optimal as possible. It might be best to
 # parametrize the number field so we can give predefined types to all struct fields
@@ -30,15 +35,19 @@ function known_values(s::PolSys)
   return s.knwns
 end
 
-# TODO: implement ParametrizedPolSys for polynomial systems that can be iterated over but 
-# are too large to store all at once. This would be useful for when we solve a subsystem using the smith decomposition
-# and we get a large amount of solutions. 
+# TODO: implement ParametrizedPolSys for polynomial systems that can be iterated 
+# over but are too large to store all at once. This would be useful for when we 
+# solve a subsystem using the smith decomposition and we get a large amount of 
+# solutions. 
+
+#┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+#┃                                   Inequality                                    ┃
+#┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 # Inequality of the form pol <s> 0 where s can be
 # 1 : >, 
 # 2 : ≥, 
 # 3 : ≠
-
 struct Inequality
   rng::Ring
   pol
