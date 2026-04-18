@@ -63,7 +63,7 @@ type( ineq::Inequality ) = ineq.t
 
 ring( ineq::Inequality ) = ineq.rng
 
-function Base.show( io::IO, ineq::Inequality )
+function printstring(ineq::Inequality)
   t = type(ineq)
   s = if t == 1
     " > "
@@ -72,7 +72,11 @@ function Base.show( io::IO, ineq::Inequality )
   elseif t == 3
     " ≠ "
   end
-  print( io, string(polynomial(ineq)) * s * "0" )
+  string(polynomial(ineq)) * s * "0"
+end
+
+function Base.show( io::IO, ineq::Inequality )
+  print( io, printstring(ineq) )
 end
 
 function evaluate( ineq::Inequality, vars::Vector{Int}, vals::Vector{T} ) where {T <: RingElement}
