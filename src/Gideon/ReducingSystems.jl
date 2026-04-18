@@ -8,15 +8,15 @@ export fixed_point
 """fixed_point(update_polsys::Function)::Function takes a function update_polsys that updates a list of PolSys'es and returns a 
 function that keeps updating such a list until no changes have been found."""
 
-function fixed_point(g::Function,eq=isequal)::Function 
-    function h(x::Array{PolSys})::Array{PolSys}
-        y = g(x)
-        while !eq( y, x )
-            x, y = y, g(x) 
-        end
-        return y
+function fixed_point(g::Function, eq = isequal)::Function
+  function h(x::Array{PolSys})::Array{PolSys}
+    y = g(x)
+    while !eq(y, x)
+      x, y = y, g(x)
     end
-    return h
+    return y
+  end
+  return h
 end
 
 export cleanup
@@ -30,25 +30,21 @@ export cleanup
    cleanup(ls::Array{PolSys})::Array{PolSys} maps cleanup to ls.
 """
 function cleanup(systems::Array{PolSys})::Array{PolSys}
-    map( cleanup, systems )
+  return map(cleanup, systems)
 end
 
-function cleanup( s::PolSys )::PolSys
-end
-
+function cleanup(s::PolSys)::PolSys end
 
 export deduce_trivialities
 
 """deduce_trivialities( s::PolSys )::PolSys updates s by using binomials containing a constant term.
 deduce_trivialities( systems::Array{PolSys} )::Array{Polsys} maps deduce_trivialities to systems.
 """
-function deduce_trivialities( systems::Array{PolSys} )::Array{PolSys}
-    map( deduce_trivialities, systems )
+function deduce_trivialities(systems::Array{PolSys})::Array{PolSys}
+  return map(deduce_trivialities, systems)
 end
 
-function deduce_trivialities( s::PolSys )::Array{PolSys}
-end
-
+function deduce_trivialities(s::PolSys)::Array{PolSys} end
 
 export reduce_binomial_subsystem
 
@@ -63,13 +59,11 @@ export reduce_binomial_subsystem
 """
 
 function reduce_binomial_subsystem(systems::Array{PolSys})::Array{PolSys}
-    map( reduce_by_binomial_subsystem, systems )
+  return map(reduce_by_binomial_subsystem, systems)
 end
 
 function reduce_binomial_subsystem(s::PolSys)::Array{PolSys}
-
 end
-
 
 export solve_binomial_subsystem
 
@@ -84,9 +78,8 @@ export solve_binomial_subsystem
 """
 
 function solve_binomial_subsystem(systems::Array{PolSys})::Array{PolSys}
-    map( reduce_by_binomials, systems )
+  return map(reduce_by_binomials, systems)
 end
 
 function solve_binomial_subsystem(s::PolSys)::Array{PolSys}
-
 end
