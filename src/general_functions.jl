@@ -1,3 +1,10 @@
+# abreviations for fields 
+ℚ = QQ;
+ℚb       = algebraic_closure(ℚ)
+ℚab, ζ   = abelian_closure(ℚ; sparse = false)
+sℚab, ζs = abelian_closure(ℚ; sparse = true)
+
+
 function complement(a, b)
   ub      = unique(b)
   matches = []
