@@ -49,14 +49,13 @@ function mf_pent_eqns(r::Int64, dict, K::Ring; triv_vac = true)
 
   labels = keys(dict)
 
+  function fs(v::Vector{Int64})
   if triv_vac
-    function fsymb(v::Vector{Int64})
       1 ∈ v[1:3] && return K(1)
-      !haskey(dict, v) && return K(0)
-      return dict[v]
-  else
-      !haskey(dict, v) && return K(0)
-      return dict[v]
+      return !haskey(dict, v) ? K(0) : dict[v]
+    else
+      return !haskey(dict, v) ? K(0) : dict[v]
+    end
   end
 
   # Construct the polynomials
