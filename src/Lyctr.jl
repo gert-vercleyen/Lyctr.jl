@@ -2,6 +2,7 @@ module Lyctr
 
 using Oscar
 using FusionRings
+using PicoSAT
 
 include("general_functions.jl")
 include("Gideon/Gideon.jl")
