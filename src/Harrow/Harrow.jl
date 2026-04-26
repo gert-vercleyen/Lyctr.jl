@@ -1,4 +1,4 @@
 
-include("Symbols.jl")
-include("ImportData.jl")
-include("PolyhedralSystems.jl")
+include("symbols.jl")
+include("io.jl")
+include("polyhedral_systems.jl")
