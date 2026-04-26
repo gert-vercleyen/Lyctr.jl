@@ -1,6 +1,7 @@
 module Lyctr
 
 using Oscar
+import Oscar: evaluate, polynomial_ring
 using FusionRings
 using PicoSAT
 
