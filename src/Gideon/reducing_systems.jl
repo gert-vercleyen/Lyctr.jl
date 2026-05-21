@@ -76,10 +76,82 @@ export solve_binomial_subsystem
    
     reduce_binomials(ls::Array{PolSys})::Array{PolSys} maps reduce_binomials to ls.
 """
-
-function solve_binomial_subsystem(systems::Array{PolSys})::Array{PolSys}
-  return map(reduce_by_binomials, systems)
+# wz stands for without zeros: we assume none of the vars in the binomials can be zero!!!
+function solve_binomial_system_wz( systems::Array{PolSys}; expand_field = true )::Array{PolSys}
+  return map( s -> solve_binomial_system_wz( s, expand_field = expand_field ), systems)
 end
 
-function solve_binomial_subsystem(s::PolSys)::Array{PolSys}
+
+function solve_binomial_system_wz(s::PolSys, expand_field = true )::Array{PolSys}
+  !expand_field && error("expand_field = false: Solving binomial subsystems over a fixed field is not yet implemented")
+
+  # Filter binomials from system 
+  bins = filter( is_binomial , polynomials(s) )
+
+  # convert binomial equations to sparse matrix 
+  sm, rhs = sparse_matrix_and_rhs(bins)
+
+  # decompose matrix 
+
+  # get rank 
+
+  # check if rank is 0
+
+  #  
+
 end
+
+export sparse_matrix_and_rhs
+
+function sparse_matrix_and_rhs( binomials::AbstractVector; bin_check = true ) 
+
+  if is_empty(binomials)
+    return ( sparse_matrix(ZZ), Any[] )
+  end
+
+  sparse_mat = sparse_matrix(ZZ)
+  rhs        = []
+
+  for binom in binomials
+    srow, div = sparse_bin_row_rhs(binom, bin_check = bin_check )
+    push!( sparse_mat, srow )
+    push!( rhs, div )
+  end
+
+  ( sparse_mat, rhs )
+
+end
+
+# for binomial bin = α 𝐱^𝐔 + β 𝐱^𝐕 returns ( srow, rhs ) where srow is a 
+# sparse row = 𝐮 - 𝐯 and rhs = -β/α
+function sparse_bin_row_rhs( bin; bin_check = true )
+  bin_check && !is_binomial(bin) && error("argument is not a binomial")
+  𝐔 = exponent_vector( term( bin, 1 ), 1 )
+  𝐕 = exponent_vector( term( bin, 2 ), 1 )
+
+  s𝐔 = sparse_row( matrix( ZZ, [ 𝐔 ] ) )
+  s𝐕 = sparse_row( matrix( ZZ, [ 𝐕 ] ) )
+  
+  α = coeff( bin, 1 )
+  β = coeff( bin, 2 )
+
+  ( s𝐔 - s𝐕, -β/α )
+end
+
+#= function most likely not needed unless converting to sparse 
+   rows via matrix(ZZ,...) in sparse_bin_row_rhs is too costly
+# return the index of the variables and their exponents
+# for a term 
+function pos_exponent(term)
+
+  exponents = filter( !=(0) , exponent_vector(term,1))
+  varind    = var_indices(term)
+
+  zip( varind, exponents )
+end
+=#
+
+#function reduce_semi_lin_mod_ℤ( sm::, rhs::, :z )
+#end
+
+
