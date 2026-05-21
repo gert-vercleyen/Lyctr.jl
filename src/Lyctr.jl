@@ -1,7 +1,7 @@
 module Lyctr
 
 using Oscar
-import Oscar: evaluate, polynomial_ring
+import Oscar: evaluate, polynomial_ring, sparse_matrix, snf
 using FusionRings
 using PicoSAT
 
