@@ -33,9 +33,9 @@ function mf_pent_sys(fr::FusionRing, K::Ring; symbol = :ℱ, triv_vac = true)::P
   fsymb(v::Vector{Int64}) = 1 ∈ v[1:3] ? R(1) : dict(v)
 
   if triv_vac
-    set_triv_vac(k,v) = 1 ∈ k[1:3] ? 1 : v 
+    set_triv_vac(k, v) = 1 ∈ k[1:3] ? 1 : v
 
-    variables = Dict(k => set_triv_vac(k,v) for (k,v) in dict )
+    variables = Dict(k => set_triv_vac(k, v) for (k, v) in dict)
 
     return pol_sys(R, pp, ic, variables; symm = s)
   else
@@ -43,7 +43,6 @@ function mf_pent_sys(fr::FusionRing, K::Ring; symbol = :ℱ, triv_vac = true)::P
 
     return pol_sys(R, pp, ic, variables; symm = s)
   end
-
 end
 
 # TODO: check whether these are actually sparse. 
@@ -59,18 +58,14 @@ Builder for an element of R
 
 julia> push_term!(C, ZZ(3), [1, 2]);
 
-
 julia> push_term!(C, ZZ(2), [1, 1]);
 
-
 julia> push_term!(C, ZZ(4), [0, 0]);
-
 
 julia> f = finish(C)
 3*x*y^2 + 2*x*y + 4
 
 julia> push_term!(C, ZZ(4), [1, 1]);
-
 
 julia> f = finish(C)
 4*x*y
@@ -109,7 +104,7 @@ function mf_pent_polynomials(fr, dict, K::Ring; triv_vac = true)
 
   # add polynomials for which pent eqn has nonzero LHS
   for lab1 in labels
-    f, c, d, e, g,_ ,_ , l, _, _ = lab1
+    f, c, d, e, g, _, _, l, _, _ = lab1
 
     function is_match(v::Vector{Int64})
       return v[3] == l && v[4] == e && v[5] == f
@@ -120,13 +115,10 @@ function mf_pent_polynomials(fr, dict, K::Ring; triv_vac = true)
     for lab2 in matches
       a, b, _, _, _, _, _, k, _, _ = lab2
       pol =
-        fs([f, c, d, e, g, 1, 1, l, 1, 1 ]) * 
-        fs([a, b, l, e, f, 1, 1, k, 1, 1 ]) - 
-        sum(
-          fs([a, b, c, g, f, 1, 1, h, 1, 1 ])*
-          fs([a, h, d, e, g, 1, 1, k, 1, 1 ])*
-          fs([b, c, d, k, h, 1, 1, l, 1, 1 ]) for
-          h in 1:r
+        fs([f, c, d, e, g, 1, 1, l, 1, 1]) * fs([a, b, l, e, f, 1, 1, k, 1, 1]) - sum(
+          fs([a, b, c, g, f, 1, 1, h, 1, 1]) *
+          fs([a, h, d, e, g, 1, 1, k, 1, 1]) *
+          fs([b, c, d, k, h, 1, 1, l, 1, 1]) for h in 1:r
         )
 
       if pol != K(0)
@@ -160,10 +152,9 @@ function mf_pent_polynomials(fr, dict, K::Ring; triv_vac = true)
       a, b, = n2
       c, d, = n3
       pol = sum(
-        fs([a, b, c, g, f, 1, 1, h, 1, 1 ])*
-        fs([a, h, d, e, g, 1, 1, k, 1, 1 ])*
-        fs([b, c, d, k, h, 1, 1, l, 1, 1 ]) for
-        h in 1:r
+        fs([a, b, c, g, f, 1, 1, h, 1, 1]) *
+        fs([a, h, d, e, g, 1, 1, k, 1, 1]) *
+        fs([b, c, d, k, h, 1, 1, l, 1, 1]) for h in 1:r
       )
 
       if pol != K(0)
@@ -175,7 +166,7 @@ function mf_pent_polynomials(fr, dict, K::Ring; triv_vac = true)
   return pols
 end
 
-function normalize_pol( pol ) 
+function normalize_pol(pol)
   l = leading_coefficient(pol)
   if l != 1
     return pol/l
@@ -184,11 +175,11 @@ function normalize_pol( pol )
   end
 end
 
-function zero_struct_const(fr::FusionRing)::Vector{Tuple{Int64,Int64,Int64}}
+function zero_struct_const(fr::FusionRing)::Vector{Tuple{Int64, Int64, Int64}}
   sc = nonzero_structure_constants(fr)
   r  = rank(fr)
 
-  result = Tuple{Int64,Int64,Int64}[]
+  result = Tuple{Int64, Int64, Int64}[]
 
   for i in 1:r, j in 1:r, k in 1:r
     v = (i, j, k)

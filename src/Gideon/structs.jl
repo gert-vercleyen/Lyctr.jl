@@ -7,7 +7,7 @@
 # This struct should be as optimal as possible. It might be best to
 # parametrize the number field so we can give predefined types to all struct fields
 struct PolSys
-  rng::Ring            # base ring over which pols are defined
+  rng::Ring      # base ring over which pols are defined
   pls            # Polynomials of the system
   cnstr          # Constraints of the system
   knwns          # Dictionary of known values
@@ -64,7 +64,7 @@ struct Inequality
   t::Int64
 end
 
-function inequality( ring, polynomial, type )
+function inequality(ring, polynomial, type)
   s = if type == >
     1
   elseif type == ≥
@@ -73,14 +73,16 @@ function inequality( ring, polynomial, type )
     3
   end
 
-  Inequality( ring, polynomial, s )
+  return Inequality(ring, polynomial, s)
 end
 
-polynomial( ineq::Inequality ) = ineq.pol
+function polynomial(ineq::Inequality)
+  return ineq.pol
+end
 
-type( ineq::Inequality ) = ineq.t
-
-ring( ineq::Inequality ) = ineq.rng
+function type(ineq::Inequality)
+  return ineq.t
+end
 
 function printstring(ineq::Inequality)
   t = type(ineq)
@@ -91,11 +93,11 @@ function printstring(ineq::Inequality)
   elseif t == 3
     " ≠ "
   end
-  string(polynomial(ineq)) * s * "0"
+  return string(polynomial(ineq)) * s * "0"
 end
 
-function Base.show( io::IO, ineq::Inequality )
-  print( io, printstring(ineq) )
+function Base.show(io::IO, ineq::Inequality)
+  return print(io, printstring(ineq))
 end
 
 function evaluate( ineq::Inequality, vars::Vector{Int}, vals::Vector{T} ) where {T <: RingElement}
@@ -106,7 +108,7 @@ function evaluate( ineq::Inequality, vars::Vector{Int}, vals::Vector{T} ) where 
   )
 end
 
-function is_true( ineq::Inequality ) 
+function is_true(ineq::Inequality)
   p = polynomial(ineq)
   !is_constant(p) && return false
   
@@ -131,8 +133,8 @@ end
 
 export constraint
 
-function constraint(R::Ring,list)::Constraint
-  Constraint(R,list)
+function constraint(R::Ring, list)::Constraint
+  return Constraint(R, list)
 end
 
 export list
@@ -144,27 +146,27 @@ end
 export polynomial_ring
 
 function polynomial_ring(c::Constraint)
-  c.polring
+  return c.polring
 end
 
 function Base.show( io::IO, constraint::Constraint )
   function boolstring(b::Bool) 
-    b ? "⊤" : "⊥"
+    return b ? "⊤" : "⊥"
   end
 
   function ineqstring(ineq)::String
-    typeof(ineq) === Bool ? boolstring(ineq) : printstring(ineq)
+    return typeof(ineq) === Bool ? boolstring(ineq) : printstring(ineq)
   end
 
   function orstring(l)::String
-    join( ineqstring.(l), " ∨ " )
+    return join(ineqstring.(l), " ∨ ")
   end
   
   lis = list(constraint) 
 
   orstrings = orstring.(lis)
 
-  n = size( orstrings, 1 ) 
+  n = size(orstrings, 1)
 
   # try to keep length under 80 
   l1 = length(orstrings[begin]) 
@@ -173,26 +175,25 @@ function Base.show( io::IO, constraint::Constraint )
   startlength = n == 1 ? l1 : l1 + l2 
 
   if startlength > 120
-    str = join( [ orstrings[begin], "…" , orstrings[end] ], " ∧ " )
-    print( io, str )
+    str = join([orstrings[begin], "…", orstrings[end]], " ∧ ")
+    print(io, str)
   else
     i = 2
     nextstring = orstrings[i]
     l = startlength + length(nextstring)
     
-    strings = [ orstrings[begin] ]
+    strings = [orstrings[begin]]
     while l < 120 && i < n
-      push!( strings, orstrings[i] )
+      push!(strings, orstrings[i])
       i = i + 1
       l = l + length(orstrings[i])
     end
 
-    if size(strings,1) < n - 1
-      push!( strings, "…" )
-      push!( strings, orstrings[end] )
+    if size(strings, 1) < n - 1
+      push!(strings, "…")
+      push!(strings, orstrings[end])
     end 
 
-    print( io, join( strings, " ∧ " ) )
+    print(io, join(strings, " ∧ "))
   end
-
 end

@@ -25,7 +25,6 @@ where
 The function sort_and_group_by_knowns creates (what I call) a tower of couples of variables and lists of equations
 =#
 
-
 """
 sort_and_group_by_knowns( eqns, weight ) takes a list `eqns` of tuples ( eq_i, vrs_i ) that contain 
 an equation (or identifier) eq_i and a list of variables apearing in that equation `vrs`. It returns a 
@@ -34,38 +33,36 @@ fully determined via knowledge of vars_1, ..., vars_j. The order of the tuples i
 the elements of ids_j is the smallest out of all eq_i that are not contained in eqs_k (k<j) and for which 
 the variables in vars_1, ... vars_{j-1} are not taken into account when calculating the weights.
 """
-function sort_and_group_by_knowns( equations, weight::Function )
-    newlist = []
+function sort_and_group_by_knowns(equations, weight::Function)
+  newlist = []
 
-    eqns = equations
+  eqns = equations
 
-    function removevars( vars, tuple )
-        vrs, eqn = tuple 
-        ( filter( x -> x ∉ vars, vrs ), eqn )
+  function removevars(vars, tuple)
+    vrs, eqn = tuple
+    return (filter(x -> x ∉ vars, vrs), eqn)
+  end
+
+  while !isempty(eqns)
+    println(equations)
+    # get index of eqn with lowest weight
+    _, ind = findmin(weight.(eqns))
+    vars, eqn = eqns[ind]
+
+    if isempty(vars) #  eqn doesn't contain new unknowns
+      # append eqn to list of eqns of last tuple
+      push!(newlist[end][2], eqn)
+    else
+      # add start new tuple
+      push!(newlist, (vars, [eqn]))
     end
 
-    while !isempty(eqns)
-        println(equations)
-        # get index of eqn with lowest weight
-        _, ind = findmin( weight.(eqns) ) 
-        vars, eqn = eqns[ind]
+    # remove known variables from other equations 
+    eqns = map(eq -> removevars(vars, eq), eqns)
 
-        if isempty(vars) #  eqn doesn't contain new unknowns
-            # append eqn to list of eqns of last tuple
-            push!( newlist[end][2], eqn )
-        else
-            # add start new tuple
-            push!( newlist, ( vars, [ eqn ] ) )
-        end
-       
-        # remove known variables from other equations 
-        eqns = map( eq -> removevars( vars, eq ), eqns )
+    # remove equation
+    deleteat!(eqns, ind)
+  end
 
-        # remove equation
-        deleteat!(eqns,ind)
-
-    end
-
-    newlist
-
+  return newlist
 end

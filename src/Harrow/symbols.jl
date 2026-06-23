@@ -1,5 +1,8 @@
 # This file contains constructors for all kinds of symbols whose labels represent objects in a fusion category
 
+#┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+#┃                                    F_Labels                                     ┃
+#┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 export F_labels
 # F_labels returns a list of 10-element lists corresponding to well-formed F-symbols
@@ -31,6 +34,10 @@ function F_labels(fr::FusionRing)::Vector{Vector{Int64}}
   return lbls
 end
 
+#┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+#┃                                   F_symbols                                     ┃
+#┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+#
 export F_symbols
 
 """F_symbols( fr::FusionRing; ring=ℚ, symbol = :ℱ ) returns a couple ( R, dict )
