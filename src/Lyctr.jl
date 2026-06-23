@@ -13,6 +13,8 @@ include("Gideon/Gideon.jl")
 include("Harrow/Harrow.jl")
 
 function __init__()
+  global QQb     = algebraic_closure(QQ)
+  global QQab, ζ = abelian_closure(QQ)
     # GLOBAL VARIABLES
     # Abreviations for commonly used fields
 end
