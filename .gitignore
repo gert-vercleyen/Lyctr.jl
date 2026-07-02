@@ -3,4 +3,4 @@
 # editor configuration files
 *.editorconfig
 
-*/data
+*/split_number_data
