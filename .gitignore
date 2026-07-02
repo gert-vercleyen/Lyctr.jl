@@ -2,3 +2,5 @@
 
 # editor configuration files
 *.editorconfig
+
+*/data
