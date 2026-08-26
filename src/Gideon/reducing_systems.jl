@@ -83,23 +83,159 @@ function solve_binomial_subsystem_wz(
 end
 
 
-function solve_binomial_system_wz(s::PolSys, expand_field = true )::Array{PolSys}
-  !expand_field && error("expand_field = false: Solving binomial subsystems over a fixed field is not yet implemented")
+function solve_binomial_subsystem_wz(s::PolSys; expand_field = true, symbol = :z)
+  !expand_field && error(
+    "expand_field = false: Solving binomial subsystems over a fixed field is not yet implemented",
+  )
+
+  ϕ  = embedding(s)
+  ϕ === nothing && error("Method only defined for embedded subfields of QQBar at the moment")
+
+  isbinomial(p) = length(p) === 2
 
   # Filter binomials from system 
   bins = filter(isbinomial, polynomials(s))
 
+  # If no binomials in system, return system
+  isempty(bins) && return s
+
   # convert binomial equations to sparse matrix 
   sm, rhs = sparse_matrix_and_rhs(bins)
 
+  nc = number_of_columns(sm)
+  nr = number_of_rows(sm)
+
   # decompose matrix 
+  ( L, D, R ) = diagonalize( sm )
+  # get rank
+  r = nnz(D)
 
-  # get rank 
+  exprhs = powerdot( L, rhs )
 
-  # check if rank is 0
+  # TODO: need some logging functionality to convince user that system is indeed
+  # (in)consistent
 
-  #  
+  # Check consistency
+  !all(==(1),exprhs[r+1:end]) && pol_sys([],constraint(QQ,[false]),variables(s))
 
+  # create r × r matrix inverse of the diagonal matrix d
+  invdmat = sparse_diagonal_matrix( QQ, [ 1//D[i,i] for i in 1:r ] )
+
+  # split R mat into pieces for discrete and continuous parts of solution
+  Zmat = sub( R, 1:nc, 1:r )
+  Cmat = sub( R, 1:nc, r+1:nc )
+
+  cbr    = change_base_ring
+  Zspace = mul_sparse(cbr(QQ,Zmat),invdmat)
+
+  # DISCRETE PART OF SOLUTION
+  #
+  # set up all integer vectors that lead to inequivalent solutions
+  denoms = denominator.( Matrix(Zspace) )
+  lcms   = [ lcm( denoms[:,j] ) for j in 1:r ]
+  ranges = map( i -> range(1,i), lcms )
+  # TODO: following code feels very clunky, this shouldn't be so ugly...
+  tuples = Iterators.product(ranges...)
+  Zvecs  = reshape( [ collect(t) for t in tuples ], length(tuples), 1 )
+
+
+  # set up cyclotomic field to express discrete solutions
+  cd   = Int64(lcm([ D[i,i] for i in 1:r ]))
+  cpol = cyclotomic_polynomial(cd)
+  C, c = number_field( cpol )
+  ic   = hom( C, QQBar, QQBar( ζ(cd) ) )
+
+  # combine the old base field with the cyclotomic field
+  #
+  # we need to convert QQ to an abstract field in order to combine them
+  K = base_field(s)
+  if K === QQ 
+    K = QQabs
+    rhs = QQabs.(rhs)
+  end
+  ik = embedding(s)
+  # S is the new base_field of the new pol system,
+  # ι is an embedding from S into QQBar
+  # iK embeds K into S and iL embeds L into S
+  S, ι, iK, iL = merge( K, ik, C, ic )
+  
+
+  # set up exponentials of integer vectors. We might need to
+  # expand the field over which the polsys is defined
+  # TODO: what if we're using an abstract field? What about finite fields?
+  
+  
+  cyclovec = [ c^(ZZ(cd//D[i,i])) for i in 1:r ]
+  function expZvec( m )
+    vec = cyclovec .^ m
+    powerdot( Zmat, vec )
+  end
+
+  # CONSTANT PART OF SOLUTION 
+  sL     = cbr( QQ, sub( L, 1:r, 1:nr ) )
+  expmat = cbr( ZZ, mul_sparse( Zspace, sL ) )
+  v0     = powerdot( expmat, rhs )
+
+  # CONTINUOUS PART OF SOLUTION
+  # TODO: R contains too many variables. A lot of the z[i] won't appear
+  # in actual solution: should remove 0 columns of Cmat and only have
+  # a variable per non-zero column
+  R, z = polynomial_ring( S, :z => 1:(nc-r)  ) 
+  FF   = fraction_field(R) # since we need to have negative powers of vars
+  Cvec = powerdot( Cmat, FF.(z) )
+
+  # COMBINED SOLUTION
+  function sol( m )
+    [ FF.(iK.(v0[i])) * FF.(iL.( expZvec(m)[i] )) * Cvec[i] for i in 1:nc ]
+  end
+
+  newsystems = PolSys[]
+
+  for m in Zvecs
+    solution   = sol(m)
+    evsol(pol) = evaluate(pol,solution)
+    newknowns  = Dict( k => evsol(v) for (k,v) in known_values(s) )
+    newpols    = R.(numerator.(evsol.(polynomials(s))))
+
+    #TODO:
+    # * UPDATE CONSTRAINT!
+    push!(newsystems, pol_sys(newpols,constraint(s),newknowns; emb =ι ) )
+  end
+  
+  return newsystems
+end
+
+"""powerdot( v::SRow, w::SRow ) where v and w
+   are two vectors with length n, returns w[1]^v[1] * ⋯ * w[n]^v[n]
+   powerdot( M::SMat, w::SMat ) where w
+   is a vector of length n, and M an m × n matrix returns a vector v of
+   length n with coefficients
+   v[i] =  w[1]^m[i,1] * ⋯ * w[n]^m[i,n]
+"""
+# TODO: need safety checks that vectors have right size
+function powerdot( v::SRow, w::AbstractVector )
+  ind = v.pos
+  res = parent(w[1])(1)
+  for i in ind
+    res *= w[i]^v[i]
+  end
+  return res
+end
+
+function powerdot( v::AbstractVector, w::AbstractVector )
+  res = parent(w[1])(1)
+  for i in ind
+    res *= w[i]^v[i]
+  end
+  return res
+end
+
+function powerdot( m::SMat, w::AbstractVector )::AbstractVector
+  [ powerdot(m[i],w) for i in 1:nrows(m) ]
+end
+
+function powerdot( m::AbstractMatrix, w::AbstractVector )::AbstractVector
+  [ powerdot(m[i,:],w) for i in 1:nrows ]
 end
 
 export sparse_matrix_and_rhs
