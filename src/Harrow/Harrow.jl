@@ -1,4 +1,6 @@
-
+include("structs.jl")
 include("symbols.jl")
 include("io.jl")
 include("polyhedral_systems.jl")
+include("symmetries.jl")
+include("properties.jl")
