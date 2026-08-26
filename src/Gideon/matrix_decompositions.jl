@@ -93,17 +93,20 @@ end
 #┃                                        snf                                      ┃
 #┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-# TODO: implement sparse snf with transforms 
+function hnf_with_transform(
+  A::SMat{ZZRingElem};
+  truncate::Bool = false,
+  full_hnf::Bool = true,
+  auto::Bool = false,
+  limit::Int = typemax(Int),
+)
+  B, T = Hecke.hnf_kannan_bachem(A, Val(true); truncate, full_hnf, auto, limit)
 
-function hnf_with_transform(A::SMat{ZZRingElem}; truncate::Bool = false, full_hnf::Bool = true, auto::Bool = false, limit::Int=typemax(Int))
-  B, T = hnf_kannan_bachem(A, Val(true); truncate, full_hnf, auto, limit)
-  I = identity_matrix( SMat, ZZ, nrows(A))
+  I = identity_matrix(SMat, ZZ, nrows(A))
 
-  for (i, TT) in enumerate(T)
-    apply_left!(I, TT)
+  for m in T
+        Hecke.apply_left!(I,m)
   end
-  return ( B, I )
+
+  return (B, I )
 end
-
-
-
