@@ -40,7 +40,7 @@ function diagonalize(A::SMat, left::Bool = true, right::Bool = true)
       else 
         I = s1(nr)
 
-A, I =         HNFT(A, I) 
+        A, I = HNFT(A, I)
 
       	R = sparse_matrix(ZZ, nrows(I), ncols(C))
 
@@ -60,7 +60,7 @@ A, I =         HNFT(A, I)
       else
         I = s1(nc) 
 
-A, I =         HNFT(A, I)
+        A, I = HNFT(A, I)
 
         R = sparse_matrix(ZZ, nrows(I), ncols(D))
 
