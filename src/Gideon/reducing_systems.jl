@@ -70,7 +70,7 @@ function reduce_binomial_subsystem(s::PolSys)::Array{PolSys} end
 # TODO: following method only works for embedded fields at the moment.
 # Shouldn't be too hard to generalize though. We just need to be able to
 # add n'th roots of unity.
-
+ 
 export solve_binomial_subsystem_wz
 
 """solve_binomial_subsystem_wz(s::PolSys)::Array{PolSys} returns an array of PolSys' where
@@ -114,7 +114,7 @@ function solve_binomial_subsystem_wz(s::PolSys; expand_field = true, symbol = :z
   nc = number_of_columns(sm)
   nr = number_of_rows(sm)
 
-  # decompose matrix 
+  # decompose matrix
   ( L, D, R ) = diagonalize( sm )
   # get rank
   r = nnz(D)
@@ -275,7 +275,7 @@ function sparse_bin_row_rhs(bin; bin_check = true)
 
   s𝐔 = sparse_row(matrix(ZZ, [𝐔]))
   s𝐕 = sparse_row(matrix(ZZ, [𝐕]))
-  
+
   α = coeff(bin, 1)
   β = coeff(bin, 2)
 
