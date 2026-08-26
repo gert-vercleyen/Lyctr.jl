@@ -2,7 +2,6 @@
 # The main idea is to have small functions that take a list of PolSys'es and 
 # return a list with updated PolSys'es. 
 # These can then be combined at will and fed to a function such as fixed_point 
-
 export fixed_point
 
 """fixed_point(update_polsys::Function)::Function takes a function update_polsys that updates a list of PolSys'es and returns a 
@@ -20,7 +19,7 @@ function fixed_point(g::Function, eq = isequal)::Function
 end
 
 export cleanup
-
+# TODO: split this function up
 """cleanup(s::PolSys)::PolSys takes a PolSys and 
     (1) removes all duplicate polynomials, 
     (2) removes all nonzero variables from polynomials where they apear in each term,
@@ -33,12 +32,16 @@ function cleanup(systems::Array{PolSys})::Array{PolSys}
   return map(cleanup, systems)
 end
 
-function cleanup(s::PolSys)::PolSys end
+function cleanup(s::PolSys)::PolSys
+  polring = polynomial_ring(s)
+  newpols = filter( ≠(0), polynomials(s) )
+end
 
 export deduce_trivialities
 
-"""deduce_trivialities( s::PolSys )::PolSys updates s by using binomials containing a constant term.
-deduce_trivialities( systems::Array{PolSys} )::Array{Polsys} maps deduce_trivialities to systems.
+"""deduce_trivialities( s::PolSys; splitpowers = false )::PolSys updates s by using binomials of the form x - c, where c is a constant.
+deduce_trivialities( systems::Array{PolSys}; splitpowers = false )::Array{Polsys} maps deduce_trivialities to systems.
+When split_powers = true, binomials of the form x^n - c are also used. The base field of the polynomial system automatically extended (if necessary) to include the n'th roots of c
 """
 function deduce_trivialities(systems::Array{PolSys})::Array{PolSys}
   return map(deduce_trivialities, systems)
@@ -64,24 +67,30 @@ end
 
 function reduce_binomial_subsystem(s::PolSys)::Array{PolSys} end
 
-export solve_binomial_subsystem
+# TODO: following method only works for embedded fields at the moment.
+# Shouldn't be too hard to generalize though. We just need to be able to
+# add n'th roots of unity.
 
-"""reduce_binomials(s::PolSys)::Array{PolSys} returns an array of PolSys' where 
+export solve_binomial_subsystem_wz
+
+"""solve_binomial_subsystem_wz(s::PolSys)::Array{PolSys} returns an array of PolSys' where
     the binomial subsystem of s has been reduced such that the values of variables 
     that can be zero have been deduced and plugged in, and the subsystem of binomial equations
     have been upper triangularized. 
 
-    Note: the list contains one reduced system per allowed configuration of variables that can be zero. 
    
-    reduce_binomials(ls::Array{PolSys})::Array{PolSys} maps reduce_binomials to ls.
+    solve_binomial_subsystem_wz(ls::Array{PolSys})::Array{PolSys} maps reduce_binomials to ls.
+
+    Note: the list contains one reduced system per allowed configuration of variables that can be zero. 
+    At the moment this method only works if the base field of the polynomials is
+    embedded into QQBar
 """
 # wz stands for without zeros: we assume none of the vars in the binomials can be zero!!!
 function solve_binomial_subsystem_wz(
-  systems::Array{PolSys}; expand_field = true
+  systems::Array{PolSys}; expand_field = true, symbol = :z
 )::Array{PolSys}
-  return map(s -> solve_binomial_system_wz(s; expand_field = expand_field), systems)
+  return map(s -> solve_binomial_system_wz(s; expand_field = expand_field, symbol = symbol), systems)
 end
-
 
 function solve_binomial_subsystem_wz(s::PolSys; expand_field = true, symbol = :z)
   !expand_field && error(
